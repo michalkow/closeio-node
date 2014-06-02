@@ -8,8 +8,8 @@ function randomString() {
 }
 
 describe('Close.io API', function () {
-  this.timeout(5000)
-  
+  this.timeout(0);
+
   it('should create, read, updated, delete and search for leads.',
     function (done) {
     var closeio = new Closeio(config.apiKey);
@@ -35,17 +35,15 @@ describe('Close.io API', function () {
     });
   });
 
-  it('should throw an error if attempting to create a lead without email', function (done) {
+  it('should throw a verbose error', function (done) {
     var closeio = new Closeio(config.apiKey);
     closeio.lead.create({
       contacts: [{
         emails: [{
-          email: ''
+          email: 'test@example.com'
         }]
       }]
-    }).then(function () {
-      done(new Error('This should have failed'))
-    }, function (err) {
+    }).then(function () {}, function () {
       done();
     });
   });
@@ -92,6 +90,32 @@ describe('Close.io API', function () {
         return done();
       }, function (err) {
         throw new Error(err.error);
+      });
+    });
+
+  it('should create and search for leads with custom field containing spaces.',
+    function (done) {
+      var closeio = new Closeio(config.apiKey);
+      var lead_id;
+      closeio.lead.create({
+        name: 'John Wehr',
+        custom: {
+          'Lead initials': 'JW'
+        }
+      }).then(function (data) {
+        lead_id = data.id;
+        return closeio.lead.search({
+          'custom.Lead initials': 'JW'
+        });
+      }).then(function (data) {
+        assert(data.data.length > 0);
+        return closeio.lead.delete(lead_id);
+      }).then(function () {
+        return done();
+      }, function (err) {
+        return closeio.lead.delete(lead_id).then(function() {
+          throw new Error(err.error);
+        });
       });
     });
 });
