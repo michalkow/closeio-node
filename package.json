@@ -1,14 +1,14 @@
 {
   "name": "close.io",
   "preferGlobal": "false",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "author": "John Wehr <johnwehr@gmail.com>",
   "description": "",
-  "contributors": [ 
+  "contributors": [
     {
       "name": "John Wehr",
       "email": "johnwehr@gmail.com"
-    } 
+    }
   ],
   "main": "./lib/close.io.js",
   "repository": {
@@ -26,7 +26,6 @@
     "node": ">=0.6"
   },
   "scripts": {
-    "preinstall": "sudo npm i -g mocha",
     "test": "mocha"
   }
 }
