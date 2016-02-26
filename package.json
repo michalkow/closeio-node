@@ -18,7 +18,7 @@
   "keywords": [],
   "dependencies" : {
     "node-promise": "0.5.8",
-    "request": "2.27.0"
+    "request": "2.69.0"
   },
   "noAnalyze": true,
   "license": "MIT",
