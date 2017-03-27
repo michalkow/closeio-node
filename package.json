@@ -13,7 +13,7 @@
   "main": "./lib/close.io.js",
   "repository": {
     "type": "git",
-    "url": "git@github.com:elasticsales/closeio-node.git"
+    "url": "git@github.com:closeio/closeio-node.git"
   },
   "keywords": [],
   "dependencies" : {
