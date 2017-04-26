@@ -8,12 +8,15 @@ function randomString() {
 }
 
 describe('Close.io API', function () {
-  this.timeout(5000)
-  
-  it('should create, read, updated, delete and search for leads.',
-    function (done) {
-    var closeio = new Closeio(config.apiKey);
-    closeio.lead.create({
+  this.timeout(5000);
+
+  var closeio
+  beforeEach(() => {
+    closeio = new Closeio(config.apiKey);
+  })
+
+  it('should create, read, updated, delete and search for leads.', function () {
+    return closeio.lead.create({
       name: 'John Wehr'
     }).then(function (data) {
       return closeio.lead.read(data.id);
@@ -28,15 +31,10 @@ describe('Close.io API', function () {
       return closeio.lead.search({
         name: 'Wayne'
       });
-    }).then(function () {
-      done();
-    }, function (err) {
-      throw new Error(err.error);
     });
   });
 
   it('should throw an error if attempting to create a lead without email', function (done) {
-    var closeio = new Closeio(config.apiKey);
     closeio.lead.create({
       contacts: [{
         emails: [{
@@ -50,11 +48,10 @@ describe('Close.io API', function () {
     });
   });
 
-  it('should create, read, update, delete lead statuses', function (done) {
-    var closeio = new Closeio(config.apiKey),
-      randomVal = randomString(); // for confirming update
+  it('should create, read, update, delete lead statuses', function () {
+    var randomVal = randomString(); // for confirming update
 
-    closeio.status.lead.create({
+    return closeio.status.lead.create({
       label: randomString()
     }).then(function (data) {
       return closeio.status.lead.read(data.id);
@@ -65,33 +62,74 @@ describe('Close.io API', function () {
     }).then(function (data) {
       assert(data.label === randomVal);
       return closeio.status.lead.delete(data.id);
-    }).then(function () {
-      return done();
-    }, function (err) {
-      throw new Error(err.error);
     });
   });
 
-  it('should create, read, update, delete opportunity statuses',
-    function (done) {
-      var closeio = new Closeio(config.apiKey),
-        randomVal = randomString(); // for confirming update
+  it('should create, read, update, delete opportunity statuses', function () {
+    var randomVal = randomString(); // for confirming update
 
-      closeio.status.opportunity.create({
-        label: randomString()
-      }).then(function (data) {
-        return closeio.status.opportunity.read(data.id);
-      }).then(function (data) {
-        return closeio.status.opportunity.update(data.id, {
-          label: randomVal
-        });
-      }).then(function (data) {
-        assert(data.label === randomVal);
-        return closeio.status.opportunity.delete(data.id);
-      }).then(function () {
-        return done();
-      }, function (err) {
-        throw new Error(err.error);
+    return closeio.status.opportunity.create({
+      label: randomString()
+    }).then(function (data) {
+      return closeio.status.opportunity.read(data.id);
+    }).then(function (data) {
+      return closeio.status.opportunity.update(data.id, {
+        label: randomVal
       });
+    }).then(function (data) {
+      assert(data.label === randomVal);
+      return closeio.status.opportunity.delete(data.id);
     });
+  });
+
+  describe('search', function () {
+
+    var lead_id;
+
+    before(function () {
+      return closeio.lead.create({
+        name: 'John Wehr',
+        custom: {
+          foo: 'bar',
+          'Lead initials': 'JW'
+        }
+      }).then(function (data) {
+        assert(data.id);
+        lead_id = data.id;
+      })
+    })
+
+    it('should return all leads if no option is passed', function () {
+      var lead_id;
+      return closeio.lead.search({})
+        .then(function (data) {
+          // console.log(data)
+          assert(data.data.length > 0);
+        });
+    });
+
+    it('should search a lead by name', function () {
+      var lead_id;
+      return closeio.lead.search({ name: 'John Wehr'})
+        .then(function (data) {
+          // console.log(data)
+          assert(data.data.length > 0);
+        });
+    });
+
+    it('should search for leads with custom field containing spaces.', function () {
+      return closeio.lead.search({ 'custom.Lead initials': 'JW' })
+        .then(function (data) {
+          // console.log(data)
+          assert(data.data.length > 0);
+        });
+    });
+
+
+    after(function () {
+      return closeio.lead.delete(lead_id)
+    })
+
+  });
+
 });

@@ -19,17 +19,23 @@
     "type": "git",
     "url": "git@github.com:closeio/closeio-node.git"
   },
-  "keywords": ["close.io", "closeio"],
-  "dependencies" : {
-    "node-promise": "0.5.8",
-    "request": "2.69.0"
-  },
+  "keywords": [
+    "close.io",
+    "closeio"
+  ],
   "noAnalyze": true,
   "license": "MIT",
   "engine": {
     "node": ">=0.6"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "./node_modules/mocha/bin/mocha --recursive test/"
+  },
+  "dependencies": {
+    "node-promise": "0.5.8",
+    "request": "2.69.0"
+  },
+  "devDependencies": {
+    "mocha": "^3.3.0"
   }
 }
