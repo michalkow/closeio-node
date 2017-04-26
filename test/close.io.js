@@ -8,6 +8,8 @@ function randomString() {
 }
 
 describe('Close.io API', function () {
+  this.timeout(5000)
+  
   it('should create, read, updated, delete and search for leads.',
     function (done) {
     var closeio = new Closeio(config.apiKey);
@@ -33,15 +35,17 @@ describe('Close.io API', function () {
     });
   });
 
-  it('should throw a verbose error', function (done) {
+  it('should throw an error if attempting to create a lead without email', function (done) {
     var closeio = new Closeio(config.apiKey);
     closeio.lead.create({
       contacts: [{
         emails: [{
-          email: 'test@example.com'
+          email: ''
         }]
       }]
-    }).then(function () {}).then(function () {}, function () {
+    }).then(function () {
+      done(new Error('This should have failed'))
+    }, function (err) {
       done();
     });
   });
