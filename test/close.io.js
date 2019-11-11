@@ -125,7 +125,15 @@ describe('Close.io API', function () {
         });
     });
 
-
+    it('should search a lead by query', function () {
+      var lead_id;
+      return closeio.lead.search({ query: 'name:"John Wehr"'})
+        .then(function (data) {
+          // console.log(data)
+          assert(data.data.length > 0);
+        });
+    });
+    
     after(function () {
       return closeio.lead.delete(lead_id)
     })

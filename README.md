@@ -35,3 +35,26 @@ closeio.lead.create({name: "Spider Man"})
   console.log(err);
 });
 ```
+
+**Searching for Leads**
+
+The `lead.search` method accepts either a string or a dictionary of search keywords as valid parameters.
+
+To use a string to specify your search query, pass a `query` parameter to the `lead.search` method:
+
+```javascript
+closeio.lead.search({query: 'name:"Bruce Wayne" email_address:bruce@wayneenterprises.com'})
+.then(function(search_results){
+  console.log(search_results.total_results);
+});
+```
+
+To use a dictionary of search keywords to specify your search query, structure your parameters as follows:
+```javascript
+closeio.lead.search({name: "Bruce Wayne", email_address: 'bruce@wayneenterprises.com'})
+.then(function(search_results){
+  console.log(search_results.total_results);
+});
+```
+
+**Note**: The `query` parameter will override any other search keywords present in your dictionary.
